@@ -1,4 +1,4 @@
-= VanillaStack
+= VanillaStack Installer
 
 There are multiple Vendor-Stacks out there, that promise to deliver an installation without hazzles, full integration and total flexibility - only to vendor lock you to the tools, frameworks and interfaces of a product.
 
