@@ -1,23 +1,23 @@
 const express = require('express');
-const session = require('express-session');
+// const session = require('express-session');
 
 module.exports = function (app) {
   const router = express.Router();
 
-  const memoryStore = new session.MemoryStore();
-  router.use(
-    session({
-      secret: 'some secret',
-      resave: false,
-      saveUninitialized: true,
-      store: memoryStore,
-    })
-  );
-  const keycloak = require('../config/keycloakConfig').initKeycloak(
-    memoryStore
-  );
+  // const memoryStore = new session.MemoryStore();
+  // router.use(
+  //   session({
+  //     secret: 'some secret',
+  //     resave: false,
+  //     saveUninitialized: true,
+  //     store: memoryStore,
+  //   })
+  // );
+  // const keycloak = require('../config/keycloakConfig').initKeycloak(
+  //   memoryStore
+  // );
 
-  router.use(keycloak.middleware());
+  // router.use(keycloak.middleware());
 
   const connectionRouter = require('./api/connection');
   const setupRouter = require('./api/setup');

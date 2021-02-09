@@ -23,6 +23,8 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DEBUG=false
+ARG VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/202101-0a283595.tar.gz'
+ENV VANILLASTACK_ANSIBLE_SOURCE=${VANILLASTACK_ANSIBLE_SOURCE}
 ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
 EXPOSE ${PORT}
@@ -30,7 +32,7 @@ WORKDIR /usr/workdir
 
 ## Copy package files
 COPY ./backend/package.json ./
-COPY ./ansible/requirements.txt ./
+COPY ./docker/prod/installer/alpine/requirements.txt ./
 
 ## Install nginx, Ansible and pre-req
 RUN apk update && \
@@ -39,8 +41,6 @@ RUN apk update && \
     openssh-client musl-dev libffi-dev openssl-dev ca-certificates \
     python3 py3-pip python3-dev \
     gcc make --virtual build-dependencies build-base && \
-    # pip3 install cffi && \
-    # pip3 install ansible && \
     pip3 install -r requirements.txt && \
     rm -rf /var/cache/apk*  && \
     npm install && npm audit fix
@@ -49,7 +49,12 @@ RUN apk update && \
 COPY ./backend/src ./src/
 #RUN rm -rf ./public/*
 COPY --from=build  /usr/workdir/dist ./public
-COPY ./ansible ${ANSIBLEPATH}
+RUN mkdir -p /tmp/downloads && \
+wget -qO- ${VANILLASTACK_ANSIBLE_SOURCE} | tar xvz --strip-components 1 -C /tmp/downloads && \
+mv /tmp/downloads/ansible ${ANSIBLEPATH} && \
+rm -rf /tmp/downloads
+    # wget ${VANILLASTACK_ANSIBLE_SOURCE} | tar -xz -C ${ANSIBLEPATH}
+# COPY ./ansible ${ANSIBLEPATH}
 COPY ./version ./
 
 RUN echo -e '\n\
