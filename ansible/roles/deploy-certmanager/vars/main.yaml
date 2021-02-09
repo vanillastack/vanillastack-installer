@@ -1,7 +1,0 @@
----
-letscencrypt_issuers:
-  - "letsencrypt-staging"
-  - "letsencrypt-prod"
-
-custom_issuers:
-  - "certmanager-selfsigned"

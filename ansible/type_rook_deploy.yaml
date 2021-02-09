@@ -1,8 +1,0 @@
----
-- name: Deploy Rook
-  hosts: master[0]
-  become: false
-  gather_facts: false
-  roles:
-#    - role: prepare-node
-    - role: deploy-rook

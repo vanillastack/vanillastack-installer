@@ -1,9 +1,0 @@
----
-- name: install cloudfoundry
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: install-cloudfoundry
-      when: vanillaservices.cloudfoundry_enabled
-
-

@@ -1,8 +1,0 @@
----
-# defaults file for install_haproxy
-keepalived:
-  interval: 2
-  debug: 2
-keepalived_MASTER_SLAVE: SLAVE
-keepalived_priority: 101
-
