@@ -88,7 +88,7 @@ We are excited about your interest in Vanilla and hope you will join us. We take
 * Variant b) Use an already running Docker instance:
 ** pull and run the Docker-Container if you have a local docker running already:
 
- $ docker run --name vanilla --rm harbor.vanillastack.io/vanillastack/installer
+ $ docker run --name vanilla --port 8080:8080 --rm harbor.vanillastack.io/vanillastack/installer
 
 ** Point your browser to the installer at `http://localhost:8080`
 
