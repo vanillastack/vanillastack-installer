@@ -129,8 +129,8 @@ router.post('/', function (req, res) {
       redis_enabled: false, // todo: not yet implemented
       harbor_enabled: !!additional.harbor,
       loggingStack_enabled: additional.elastic,
-      loki_enabled: true,
-      grafana_enabled: true,
+      loki_enabled: false,
+      grafana_enabled: false,
       monitoring_enabled: !!additional.prometheus, // todo: not yet implemented
       kubevirt_enabled: false, // todo: not yet implemented
       moodle_enabled: false, // todo: not yet implemented
