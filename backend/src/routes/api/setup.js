@@ -44,8 +44,8 @@ router.post('/', function (req, res) {
   const nodes = req.body.nodes;
   const general = req.body.general;
   const rook = req.body.rook;
-  const openstack = req.body.openstack;
-  const cf = req.body.cf;
+  // const openstack = req.body.openstack;
+  // const cf = req.body.cf;
   const additional = req.body.additional;
   const letsencrypt = req.body.letsencrypt;
 
@@ -74,17 +74,19 @@ router.post('/', function (req, res) {
       message: 'Rook not defined',
     });
     return;
-  } else if (general.installCF && !cf) {
-    res.status(400).json({
-      message: 'CF not defined',
-    });
-    return;
-  } else if (general.installOS && !openstack) {
-    res.status(400).json({
-      message: 'OS not defined',
-    });
-    return;
   }
+  // CF and OS are excluded from the installer, they will be part of another project
+  // else if (general.installCF && !cf) {
+  //   res.status(400).json({
+  //     message: 'CF not defined',
+  //   });
+  //   return;
+  // } else if (general.installOS && !openstack) {
+  //   res.status(400).json({
+  //     message: 'OS not defined',
+  //   });
+  //   return;
+  // }
   // console.log(wsClient.verifiedNodes);
 
   const basePath = req.app.locals.config.ansibleBasePath;
@@ -108,29 +110,32 @@ router.post('/', function (req, res) {
         ? cluster.service_cidr
         : '10.96.0.0/12'
     }`, // "10.96.0.0/12",
+    cluster_sdn: 'cilium', // todo: needs to be mapped
     repo: {
-      registry: cluster.registry_endpoint,
+      registry: cluster.registry_endpoint, // todo: needs to be clarified
     },
-    staging_tag: 'testing', // todo: needs to be clarified
+    staging_tag: 'stable', // todo: needs to be clarified
     LE_issuer_name: letsencrypt.issuer,
     LE_issuer_mail: letsencrypt.issuerEmail,
     loadbalancerIP: cluster.ip,
     clusterTLDomain: cluster.fqdn,
     reset_environment: false, // todo: not yet implemented
     vanillaservices: {
-      dashboard_enabled: additional.dashboard,
-      cloudfoundry_enabled: general.installCF,
-      stratos_enabled: general.installCF ? cf.stratos : true,
-      guacamole_enabled: true, // todo: mapping required; to be implemented
+      dashboard_enabled: !!additional.dashboard,
+      // cloudfoundry_enabled: !!general.installCF,
+      // stratos_enabled: general.installCF ? cf.stratos : true,
+      guacamole_enabled: false, // todo: mapping required; to be implemented
       pgOperator_enabled: true, // todo: not yet implemented
-      redis_enabled: true, // todo: not yet implemented
-      harbor_enabled: additional.harbor,
+      redis_enabled: false, // todo: not yet implemented
+      harbor_enabled: !!additional.harbor,
       loggingStack_enabled: additional.elastic,
-      monitoring_enabled: additional.prometheus, // todo: not yet implemented
-      kubevirt_enabled: true, // todo: not yet implemented
+      loki_enabled: true,
+      grafana_enabled: true,
+      monitoring_enabled: !!additional.prometheus, // todo: not yet implemented
+      kubevirt_enabled: false, // todo: not yet implemented
       moodle_enabled: false, // todo: not yet implemented
       keycloak_enabled: true, // todo: not yet implemented
-      openstack_enabled: general.installOS,
+      // openstack_enabled: general.installOS,
     },
     vanillastorageprovider: 'rook', //todo: more types yet to come; needs to be implemented in frontend, currently bool for rook is provided
     polyverse: {
@@ -461,12 +466,12 @@ router.post('/', function (req, res) {
         storage: {
           hosts: {},
         },
-        compute: {
-          hosts: {},
-        },
-        cf: {
-          hosts: {},
-        },
+        // compute: {
+        //   hosts: {},
+        // },
+        // cf: {
+        //   hosts: {},
+        // },
         kube_cluster: {
           children: {
             master: null,
@@ -478,6 +483,8 @@ router.post('/', function (req, res) {
             master: null,
           },
         },
+        install_nodes: {},
+        install_master: {},
       },
     },
   };
@@ -485,8 +492,8 @@ router.post('/', function (req, res) {
   const masterNodes = {};
   const workerNodes = {};
   const storageNodes = {};
-  const computeNodes = {};
-  const cfNodes = {};
+  // const computeNodes = {};
+  // const cfNodes = {};
   let masterCount = 1;
   let workerCount = 1;
 
@@ -515,11 +522,12 @@ router.post('/', function (req, res) {
           node.labels.forEach((label) => {
             if (label.toUpperCase() === 'ROOK') {
               storageNodes[currentNode] = null;
-            } else if (label.toUpperCase() === 'OS') {
-              computeNodes[currentNode] = null;
-            } else if (label.toUpperCase() === 'CF') {
-              cfNodes[currentNode] = null;
             }
+            // else if (label.toUpperCase() === 'OS') {
+            //   computeNodes[currentNode] = null;
+            // } else if (label.toUpperCase() === 'CF') {
+            //   cfNodes[currentNode] = null;
+            // }
           });
           workerCount += 1;
         }
@@ -534,8 +542,8 @@ router.post('/', function (req, res) {
     hostsJson.all.children.master.hosts = masterNodes;
     hostsJson.all.children.worker.hosts = workerNodes;
     hostsJson.all.children.storage.hosts = storageNodes;
-    hostsJson.all.children.compute.hosts = computeNodes;
-    hostsJson.all.children.cf.hosts = cfNodes;
+    // hostsJson.all.children.compute.hosts = computeNodes;
+    // hostsJson.all.children.cf.hosts = cfNodes;
     const transactionId = genTransactionId();
     sleep(500).then(() => {
       setup(
