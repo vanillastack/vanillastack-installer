@@ -14,13 +14,11 @@ import Nodes from './Nodes.vue'
 import Cluster from './Cluster.vue'
 import Tools from './AdditionalTools.vue'
 import NodeCheck from './NodeCheck.vue'
-import OpenStack from './OpenStack.vue'
 import Network from './js/network'
 import Subscription from './Subscription.vue'
 import Rook from './Rook.vue'
 import Summary from './Summary.vue'
 import LetsEncrypt from './LetsEncrypt.vue'
-import CF from './CF.vue'
 import Install from './Install.vue'
 import Complimentary from './ComplimentaryTools.vue'
 import 'es6-promise/auto' 
@@ -51,8 +49,6 @@ const routes = [
     { path: '/cluster', component: Cluster},
     { path: '/letsencrypt', component: LetsEncrypt},
     { path: '/rook', component: Rook},
-    { path: '/openstack', component: OpenStack},
-    { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
     { path: '/complimentary', component: Complimentary},
     { path: '/subscription', component: Subscription},
@@ -154,12 +150,6 @@ var app = new Vue({
 
         // Check, whether it is one of the dynamic routes (which might not be visible)
         if(route.path == '/rook' && !this.$store.state.installer.general.installRook)
-          return this.getRoute(forward ? index + 1 : index - 1, forward)
-
-        if(route.path == '/cf' && !this.$store.state.installer.general.installCF)
-          return this.getRoute(forward ? index + 1 : index - 1, forward)
-
-        if(route.path == '/openstack' && !this.$store.state.installer.general.installOpenStack)
           return this.getRoute(forward ? index + 1 : index - 1, forward)
 
         return route

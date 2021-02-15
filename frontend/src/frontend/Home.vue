@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row margin-2em">
       <div class="col">
-        <h3>Welcome to VanillaStack 20.11!</h3>
+        <h3>Welcome to VanillaStack 21.01!</h3>
       </div>
     </div>
     <div class="row margin-2em">

@@ -108,22 +108,6 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="./images/jaeger.png" class="lead-image" />
-            </div>
-            <div class="col-4 valign-center">
-                Jaeger is an open source distributed tracing system. It is often used within microservice-based applications to trace their behaviours and to improve performance. Jaeger was developed by Uber Engineering and donated to the CNCF in 2017.     
-            </div>
-            <div class="col">
-                <div class="custom-control custom-switch inline-block">
-                    <input class="custom-control-input" id="jaeger" name="jaeger" type="checkbox" v-model="installJaeger">
-                    <label class="custom-control-label" for="jaeger">
-                        Install Jaeger Tracing
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="row margin-2em form-group">
-            <div class="col-1">
                 <img src="./images/NGINX-logo.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
@@ -187,7 +171,6 @@ export default {
             installElastic: this.$store.state.installer.additional.elastic,
             installFluentd: this.$store.state.installer.additional.fluentd,
             installKibana: this.$store.state.installer.additional.kibana,
-            installJaeger: this.$store.state.installer.additional.jaeger,
             installCertmgr: this.$store.state.installer.additional.certmgr,
             installDashboard: this.$store.state.installer.additional.dashboard,
             installNginx: this.$store.state.installer.additional.nginx,
@@ -215,7 +198,6 @@ export default {
             dashboard: this.installDashboard,
             certmgr: this.installCertmgr,
             nginx: this.installNginx,
-            jaeger: this.installJaeger
         })
 
         next()
