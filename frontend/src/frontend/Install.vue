@@ -13,18 +13,6 @@
                 To access your installed components via their Web-UIs, you can use their respective DNS-Names
             </div>
         </div>
-        <div class="row margin-1em" v-if="installed && isOpenStack && !installationError">
-            <div class="col-5">
-                <p><strong>OpenStack Password</strong></p>
-                To access your OpenStack-installation, please use the default password</div>
-            <div class="col"><pre>{{ keystonePass }}</pre></div>
-        </div>
-        <div class="row margin-1em" v-if="installed && isCloudFoundry && !installationError">
-            <div class="col-5">
-                <p><strong>Cloud Foundry Password</strong></p>
-                To access your CloudFoundry-installation, please use the default password</div>
-            <div class="col"><pre>{{ stratosPass }}</pre></div>
-        </div>
         <div class="row margin-1em" v-if="installed && !installationError">
             <div class="col">
                 <p><strong>kubectl Config</strong></p>
@@ -91,8 +79,6 @@ export default {
             isDryRun: window.location.search.indexOf('dry=true') > 0,
             keystonePass: '',
             stratosPass: '',
-            isOpenStack: false,
-            isCloudFoundry: false,
             showLog: false,
             installationError: false,
             log: []
@@ -139,10 +125,6 @@ export default {
             var apps = []
             if(item.rook)
                 apps[apps.length] = isShort ? "rook" : "Rook"
-            if(item.openstack)
-                apps[apps.length] = isShort ? "os" : "OpenStack"
-            if(item.cf)
-                apps[apps.length] = isShort ? "cf" : "Cloud Foundry"
             var labels = isShort ? apps : apps.length > 0 ? apps.join(', ') : ''
             var role = isWorker ? 'W' : 'M'
             var key = role + list.length
@@ -176,36 +158,22 @@ export default {
                 isHA: this.$store.state.installer.general.isHA,
                 general: {
                     installRook: this.$store.state.installer.general.installRook,
-                    installCF: this.$store.state.installer.general.installCF,
-                    installOS: this.$store.state.installer.general.installOpenStack,
                     harborUser: this.$store.state.base.key,
                     harborKey: this.$store.state.base.password
                     },
                 nodes: nodes,
                 cluster: JSON.parse(JSON.stringify(this.$store.state.installer.cluster)),
                 rook: JSON.parse(JSON.stringify(this.$store.state.installer.rook)),
-                openstack: JSON.parse(JSON.stringify(this.$store.state.installer.openstack)),
-                cf: JSON.parse(JSON.stringify(this.$store.state.installer.cloudfoundry)),
                 additional: JSON.parse(JSON.stringify(this.$store.state.installer.additional)),
                 letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt)),
                 //key: this.$store.state.base.key
             }
-
-            // Handle the stratos installation properly 
-            if(!data.general.installCF)
-                data.cf.stratos = false
 
             // Complimentary data
             var complimentary = this.$store.state.installer.complimentary;
             data.additional.polyverse = {}
             data.additional.polyverse.enable = complimentary.polyverse
             data.additional.polyverse.key = complimentary.polyverseKey
-
-            // Special handling for OpenStack Domain
-            data.openstack.domain += '.' + this.$store.state.installer.cluster.fqdn
-
-            this.isOpenStack = data.general.installOS
-            this.isCloudFoundry = data.general.installCF
 
             if(Globals.verbose) {
                 console.log('+++ Data +++', data)

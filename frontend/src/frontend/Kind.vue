@@ -43,14 +43,14 @@
             <div class="form-group">
                 <div class="card margin-2em">
                     <div class="card-header" id="masterNodes">
-                        <h5 class="mb-0">Initial Workloads</h5>
+                        <h5 class="mb-0">Initial Storage Backends</h5>
                     </div>
                     <div id="masterNodesData" class="show" aria-labelledby="masterNodes">
                         <div class="card-body">
                             <div class="row margin-2em">
                                 <div class="col">
-                                    <p>Please check any additional workload you want to initially install and deploy on your environment.</p>
-                                    <i class="fas fa-info-circle gray"></i> Depending on your workloads, the amount of nodes required to <em>properly</em> run these workloads might be higher than the displayed minimum values!
+                                    <p>Please check any additional storage backend you want to initially install and deploy on your environment.</p>
+                                    <i class="fas fa-info-circle gray"></i> Depending on your selected storage backends, the amount of nodes required to <em>properly</em> run these workloads might be higher than the displayed minimum values!
                                 </div>
                             </div>
                             <div class="row margin-2em form-group">
@@ -66,40 +66,6 @@
                                         <input class="custom-control-input" type="checkbox" disabled="disabled" name="installRook" id="installRook" value="Rook" v-model="installRook" :checked="installRook">
                                         <label class="custom-control-label" for="installRook">
                                             Install Rook as persistent storage
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row margin-2em form-group">
-                                <div class="col-1" style="text-align:center !important">
-                                    <a v-on:click="installOpenStack = !installOpenStack"><img src="./images/openstack.jpg" class="lead-image" /></a>
-                                </div>
-                                <div class="col-4 valign-center">
-                                    <p>OpenStack provides a complete Infrastructure-as-a-Service-layer, providing you with the ability to provision virtual machines, databases and storage. It has its own management UIs and perfectly runs on top of Kubernetes.</p>
-                                    <a href="https://www.openstack.org" class="black" target="_blank">https://www.openstack.org</a>    
-                                </div>
-                                <div class="col">
-                                     <div class="custom-control custom-switch">
-                                        <input class="custom-control-input" type="checkbox" name="installOpenStack" id="installOpenStack" v-model="installOpenStack" value="OpenStack" :checked="installOpenStack" v-on:change="installationOpenStackChanged">
-                                        <label class="custom-control-label" for="installOpenStack">
-                                            Install OpenStack as Infrastructure-as-a-Server (IaaS)-layer
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row margin-2em form-group">
-                                <div class="col-1" style="text-align:center !important">
-                                    <a v-on:click="installCF = !installCF"><img src="./images/cloudfoundry.png" class="lead-image-hor" /></a>
-                                </div>
-                                <div class="col-4 valign-center">
-                                    <p>Cloud Foundry is an amazing Platform-as-a-Service-layer, completely automating deployment and operations of your code. It supports programming languages such as Java, .NET, Node, Python and many more. It has its own management UIs and perfectly runs on top of Kubernetes.</p>   
-                                    <a href="https://www.cloudfoundry.org" class="black" target="_blank">https://www.cloudfoundry.org</a> 
-                                </div>
-                                <div class="col">
-                                     <div class="custom-control custom-switch">
-                                        <input class="custom-control-input" type="checkbox" name="installCF" id="installCF" value="CF" v-model="installCF" :checked="installCF" v-on:change="installationCFChanged">
-                                        <label class="custom-control-label" for="installCF">
-                                            Install Cloud Foundry as Platform-as-a-Server (PaaS)-layer
                                         </label>
                                     </div>
                                 </div>
@@ -157,8 +123,6 @@ export default {
             masters: 3,
             workers: 3,
             installRook: true,
-            installOpenStack: false,
-            installCF: false
         }
     },
 
@@ -167,17 +131,8 @@ export default {
         installationKindChanged (e) {
             this.masters = this.isHA ? 3 : 1
 
-            EventBus.$emit(Constants.Event_InstallationCFUpdated)
         },
         
-        installationCFChanged (e) {
-            EventBus.$emit(Constants.Event_InstallationCFUpdated, e.target.checked)
-        },
-        
-        installationOpenStackChanged (e) {
-            EventBus.$emit(Constants.Event_InstallationOpenStackUpdated, e.target.checked)
-        },
-
         validate: function() {
             this.calculateMinimums()
             this.validateState()
@@ -189,8 +144,7 @@ export default {
 
             var requiredMinimumMasters = this.isHA ? 3 : 1
             var requiredMinimumWorkers = 1
-            if(this.isHA || this.installRook || this.installCF) requiredMinimumWorkers = 3
-            if(this.installOpenStack) requiredMinimumWorkers = 3;
+            if(this.isHA || this.installRook ) requiredMinimumWorkers = 3
 
             this.minMaster = requiredMinimumMasters;
             this.minWorker = requiredMinimumWorkers;
@@ -253,8 +207,6 @@ export default {
         this.masters = this.$store.state.installer.general.masters,
         this.workers = this.$store.state.installer.general.workers,
         this.installRook = this.$store.state.installer.general.installRook,
-        this.installOpenStack = this.$store.state.installer.general.installOpenStack,
-        this.installCF = this.$store.state.installer.general.installCF
 
         // Calculate the minimum values
         this.calculateMinimums();
@@ -270,16 +222,6 @@ export default {
 
         // Update the installation kind when signalled
         EventBus.$on(Constants.Event_InstallationKindChanged, () => {
-            this.validate()
-        })
-
-        // Update the installation kind when signalled
-        EventBus.$on(Constants.Event_InstallationCFUpdated, value => {
-            this.validate()
-        })
-
-        // Update the installation kind when signalled
-        EventBus.$on(Constants.Event_InstallationOpenStackUpdated, value => {
             this.validate()
         })
 

@@ -112,18 +112,10 @@
                         <div v-if="hasApplications && installRook" class="row margin-1em">
                             <div class="col-3" v-bind:class="{ ' red' : !rookValid, ' green': rookValid }"><i class="fas fa-check small"></i> 3 worker nodes for Rook</div>
                         </div>
-                        <div v-if="hasApplications && installOpenStack" class="row margin-1em">
-                            <div class="col-3" v-bind:class="{ ' red' : !osValid, ' green': osValid }"><i class="fas fa-check small"></i> 3 worker nodes for OpenStack</div>
-                        </div>
-                        <div v-if="hasApplications && installCF" class="row margin-1em">
-                            <div class="col-3" v-bind:class="{ ' red' : !cfValid, ' green' : cfValid }"><i class="fas fa-check small"></i> 3 worker nodes for Cloud Foundry</div>
-                        </div>
                         <div class="row margin-1em"></div>
                         <div class="row margin-2em">
                             <div class="col" >
                                 <a class="btn btn-primary margin-right-1em" v-if="installRook" role="button" v-on:click="setRook()">Assign <strong>Rook</strong> to all workers</a>
-                                <a class="btn btn-primary margin-right-1em" v-if="installOpenStack" role="button" v-on:click="setOS()">Assign <strong>OpenStack</strong> to all workers</a>
-                                <a class="btn btn-primary margin-right-1em" v-if="installCF" role="button" v-on:click="setCF()">Assign <strong>Cloud Foundry</strong> to all workers</a>
                             </div>
                         </div>
                         <div class="row margin-1em"></div>
@@ -137,18 +129,6 @@
                                         <input :id="item.key_rook" class="custom-control-input" type="checkbox" v-model="item.rook" v-on:change="item.triggerValidation()">
                                         <label :for="item.key_rook" class="custom-control-label">
                                             Rook
-                                        </label>
-                                    </div>
-                                    <div class="custom-control custom-switch" v-if="installOpenStack">
-                                        <input :id="item.key_openstack" class="custom-control-input" type="checkbox" v-model="item.openstack" v-on:change="item.triggerValidation()">
-                                        <label :for="item.key_openstack" class="custom-control-label">
-                                            OpenStack
-                                        </label>
-                                    </div>
-                                    <div class="custom-control custom-switch" v-if="installCF">
-                                        <input :id="item.key_cf" class="custom-control-input" type="checkbox" v-model="item.cf" v-on:change="item.triggerValidation()">
-                                        <label :for="item.key_cf" class="custom-control-label">
-                                            Cloud Foundry
                                         </label>
                                     </div>
                                 </div>
@@ -180,25 +160,20 @@ export default {
             workers: [],
             masters: [],
             installRook : this.$store.state.installer.general.installRook,
-            installCF : this.$store.state.installer.general.installCF,
-            installOpenStack : this.$store.state.installer.general.installOpenStack,
             hasApplications: false,
             hasMultipleApplications: false,
             rookValid: true,
-            cfValid: true,
             osValid: true
     }},
 
     mounted : function () {
-        this.hasApplications = this.installRook || this.installOpenStack || this.installCF
+        this.hasApplications = this.installRook
 
         this.validate()
 
         var appCount = 0;
         if(this.hasApplications) {
             appCount += this.installRook ? 1 : 0
-            appCount += this.installOpenStack ? 1 : 0
-            appCount += this.installCF ? 1 : 0
         }
         this.hasMultipleApplications = appCount > 1
 
@@ -271,7 +246,7 @@ export default {
 
         let validator = {
             set: function(obj, prop, value) {
-                if((prop === 'ip' || prop === 'user' || prop === 'rook' || prop === 'cf' || prop === 'openstack') && obj[prop] !== value) {
+                if((prop === 'ip' || prop === 'user' || prop === 'rook') && obj[prop] !== value) {
                     Object.defineProperty(obj, "_isDirty", {value: true}); // Flag
                 }
 
@@ -312,8 +287,6 @@ export default {
                     ip: '',
                     user: '',
                     rook: false,
-                    cf: false,
-                    openstack: false,
                     copyUser: i > 0,
                     copyMaster: i == 0,
                     rookChecked: false
@@ -328,8 +301,6 @@ export default {
 
                 var localItem = {
                     key: (isWorkersList ? "w" : "m") + i,
-                    key_cf: "cf_m_" + i,
-                    key_openstack: "openstack_m_" + i,
                     key_rook: "rook_m_" + i,
                     index: i,
                     ip: item.ip,
@@ -339,8 +310,6 @@ export default {
                     isNotFirst: i > 0,
                     isFirst: i == 0,
                     rook: item.rook,
-                    cf: item.cf,
-                    openstack: item.openstack,
                     isWorker: isWorkersList,
                     rookChecked: item.rookChecked,
                     ipFocused: false,
@@ -422,8 +391,6 @@ export default {
 
             // Validate the workers
             var rookNodes = 0;
-            var cfNodes = 0;
-            var openStackNodes = 0;
 
             this.workers.forEach(worker => {
                 // Ensure, a name is set
@@ -435,8 +402,6 @@ export default {
                     isValid = false 
 
                 rookNodes += worker.rook ? 1 : 0;
-                cfNodes += worker.cf ? 1 : 0;
-                openStackNodes += worker.openstack ? 1 : 0;
 
                 worker.hasDuplicateIpAddress = worker.ip.length > 0 && ipAddresses.some(ip => worker.ip === ip);
                 ipAddresses[ipAddresses.length] = worker.ip
@@ -445,12 +410,8 @@ export default {
 
             // Check for the number of assigned nodes
             this.rookValid = rookNodes >= 3
-            this.cfValid = cfNodes >= 3
-            this.osValid = openStackNodes >= 3
 
             if(this.installRook) isValid = isValid && this.rookValid;
-            if(this.installCF) isValid = isValid && this.cfValid;
-            if(this.installOpenStack) isValid = isValid && this.osValid;
 
             // Check for duplicate IP-addresses
             let duplicates = ipAddresses.reduce((acc,currentValue,index, array) => {
@@ -498,20 +459,6 @@ export default {
         setRook: function() {
             // Activate Rook on all Workers
             this.workers.forEach(worker => worker.rook = true)
-
-            this.validate()
-        },
-
-        setCF: function() {
-            // Activate Rook on all Workers
-            this.workers.forEach(worker => worker.cf = true)
-
-            this.validate()
-        },
-
-        setOS: function() {
-            // Activate Rook on all Workers
-            this.workers.forEach(worker => worker.openstack = true)
 
             this.validate()
         }

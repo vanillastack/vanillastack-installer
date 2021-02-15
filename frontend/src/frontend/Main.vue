@@ -26,8 +26,6 @@
               <li><router-link tag="button" :disabled="!nodesChecked" to="/cluster" class="nav-item button-as-link">Cluster-Settings</router-link></li>
               <li><router-link tag="button" :disabled="!nodesChecked" to="/letsencrypt" class="nav-item button-as-link">Let's Encrypt-Settings</router-link></li>
               <li><router-link tag="button" :disabled="!nodesChecked" to="/rook" class="nav-item button-as-link">Rook</router-link></li>
-              <li v-if="hasOpenStack"><router-link tag="button" :disabled="!nodesChecked" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
-              <li v-if="hasCF"><router-link tag="button" :disabled="!nodesChecked" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
               <li><router-link tag="button" :disabled="!nodesChecked" to="/tools" class="nav-item button-as-link">Additional Tools</router-link></li>
               <li><router-link tag="button" :disabled="!nodesChecked" to="/complimentary" class="nav-item button-as-link">Complimentary Tools</router-link></li>
               <li><router-link tag="button" :disabled="!nodesChecked" to="/subscription" class="nav-item button-as-link">Subscription</router-link></li>
@@ -81,8 +79,6 @@ export default {
           subscriptionKeyEntered: false,
           seededKey: this.$store.state.installer.copiedKeyToNodes && this.$store.state.navigation.acceptedTerms,
           hasRook: this.$store.state.installer.installRook,
-          hasOpenStack: this.$store.state.installer.installOpenStack,
-          hasCF: this.$store.state.installer.installCF,
           isInstallationPage: false,
           isInstalling: false
         }
@@ -125,14 +121,6 @@ export default {
 
     EventBus.$on(Constants.Event_InstallationRookUpdated, value => {
       this.hasRook = value
-    })
-
-    EventBus.$on(Constants.Event_InstallationOpenStackUpdated, value => {
-      this.hasOpenStack = value
-    })
-
-    EventBus.$on(Constants.Event_InstallationCFUpdated, value => {
-      this.hasCF = value
     })
 
     EventBus.$on(Constants.Event_GeneralSettingsChanged, () => {

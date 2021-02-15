@@ -155,12 +155,6 @@ export default {
             if(node.rook)
                 apps[apps.length] = "Rook"
 
-            if(node.openstack)
-                apps[apps.length] = "OpenStack"
-
-            if(node.cf)
-                apps[apps.length] = "Cloud Foundry"
-
             var result = apps.join(', ')
             if(result.length == 0) 
                 result = '-'
