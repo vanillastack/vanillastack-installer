@@ -37,6 +37,8 @@ ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
 ENV ANSIBLE_CONFIG=${ANSIBLEPATH}'/ansible.cfg'
 ENV COLLECTIONS_PATHS=${ANSIBLEPATH}'/collections'
+# env nessessary due to issues with newer releases of python package cryptography
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
