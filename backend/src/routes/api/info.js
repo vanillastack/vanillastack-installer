@@ -36,6 +36,7 @@ router.get('/', function (req, res) {
     uuid: newClient.uuid,
     mode: req.app.locals.config.mode,
     version: req.app.locals.config.version,
+    ansible_version: req.app.locals.config.ansibleVersion,
     sshPublicKey: newClient.sshPublicKey,
   });
 });
@@ -84,6 +85,7 @@ router.get('/:uuid', function (req, res) {
     uuid: client.uuid,
     mode: req.app.locals.config.mode,
     version: req.app.locals.config.version,
+    ansible_version: req.app.locals.config.ansibleVersion,
     sshPublicKey: client.sshPublicKey,
   });
 });
@@ -132,6 +134,7 @@ router.post('/', function (req, res) {
     uuid: client.uuid,
     mode: req.app.locals.config.mode,
     version: req.app.locals.config.version,
+    ansible_version: req.app.locals.config.ansibleVersion,
     sshPublicKey: client.sshPublicKey,
   });
 });
