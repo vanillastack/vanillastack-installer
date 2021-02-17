@@ -8,6 +8,7 @@ COPY ./frontend/public /usr/workdir/public
 COPY ./frontend/src /usr/workdir/src
 
 WORKDIR /usr/workdir
+
 RUN npm install && npm audit fix
 
 ## Build Vue App
@@ -22,33 +23,50 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DEBUG=false
+ARG VERSION=-1
+ENV VERSION ${VERSION}
+ARG VANILLASTACK_ANSIBLE_VERSION=1.7.0
+ENV VANILLASTACK_ANSIBLE_VERSION ${VANILLASTACK_ANSIBLE_VERSION}
+# ARG VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v1.6.5.tar.gz'
+ENV VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v'${VANILLASTACK_ANSIBLE_VERSION}'.tar.gz'
 ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
+ENV ANSIBLE_CONFIG=${ANSIBLEPATH}'/ansible.cfg'
+ENV COLLECTIONS_PATHS=${ANSIBLEPATH}'/collections'
+# env nessessary due to issues with newer releases of python package cryptography
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
 ## Copy package files
 COPY ./backend/package.json ./
-COPY ./ansible/requirements.txt ./
+COPY ./docker/prod/installer/alpine/requirements.* ./
 
-## Install nginx, Ansible and pre-req
+## Get VS Ansible Playbooks
+RUN mkdir -p /tmp/downloads && mkdir -p ${ANSIBLEPATH} && \
+wget -qO- ${VANILLASTACK_ANSIBLE_SOURCE} | tar xvz --strip-components 1 -C  ${ANSIBLEPATH} && \
+# mv /tmp/downloads/ansible/* ${ANSIBLEPATH} && \
+rm -rf /tmp/downloads && rm -rf ${ANSIBLEPATH}/collections/ansible_collections/community/*
+
+## Install required tools, e.g. Ansible and pre-req
 RUN apk update && \
     apk upgrade --available && \
     sync && apk add --update --no-cache \
-    openssh-client curl musl-dev libffi-dev openssl-dev ca-certificates \
+    openssh-client git musl-dev libffi-dev openssl-dev ca-certificates \
     python3 py3-pip python3-dev \
     gcc make --virtual build-dependencies build-base && \
-    # pip3 install cffi && \
-    # pip3 install ansible && \
     pip3 install -r requirements.txt && \
-    rm -rf /var/cache/apk* && \
+    ansible-galaxy install -r requirements.yml && \
+    rm -rf /var/cache/apk*  && \
     npm install && npm audit fix
 
 ## copy app files
-#COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
-# COPY --from=build  /usr/workdir/dist ./public
-COPY ./ansible ${ANSIBLEPATH}
+#RUN rm -rf ./public/*
+COPY --from=build  /usr/workdir/dist ./public
+
+# COPY --from=build  /tmp/downloads ${ANSIBLEPATH}
+
 COPY ./version ./
 
 RUN echo -e '\n\

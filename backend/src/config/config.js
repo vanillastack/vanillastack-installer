@@ -21,6 +21,7 @@ const config = {
   mode: process.env.MODE || 'installer',
   debug: JSON.parse(process.env.DEBUG || 'false'),
   version: currentVersion,
+  ansibleVersion: process.env.VANILLASTACK_ANSIBLE_VERSION || '-1',
   localPort: process.env.PORT,
   localIp: process.env.IP,
   externalIp: process.env.EXTERNAL_IP,
