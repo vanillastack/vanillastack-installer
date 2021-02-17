@@ -21,10 +21,11 @@ const config = {
   mode: process.env.MODE || 'installer',
   debug: JSON.parse(process.env.DEBUG || 'false'),
   version: currentVersion,
+  ansibleVersion: process.env.VANILLASTACK_ANSIBLE_VERSION || '-1',
   localPort: process.env.PORT,
   localIp: process.env.IP,
-  externalIp: process.env.EXTERNAL_IP,
-  externalPort: process.env.EXTERNAL_PORT,
+  externalIp: process.env.EXTERNAL_IP || process.env.IP,
+  externalPort: process.env.EXTERNAL_PORT || process.env.PORT,
   // Keycloak
   realm: process.env.KEYCLOAK_REALM || 'vsmanager',
   clientId: process.env.KEYCLOAK_CLIENT_ID || 'vsmanager-backend',

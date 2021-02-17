@@ -7,16 +7,8 @@ COPY ./frontend/vue.config.js /usr/workdir/
 COPY ./frontend/public /usr/workdir/public
 COPY ./frontend/src /usr/workdir/src
 
-# RUN apk update && \
-#     apk upgrade --available && \
-#     sync && apk add --update --no-cache \
-#     git
-
-# RUN mkdir -p /tmp/downloads && \
-# wget -qO- ${VANILLASTACK_ANSIBLE_SOURCE} | tar xvz --strip-components 1 -C /tmp/downloads && \
-# cd /tmp/downloads && git submodule update --init --recursive /tmp/downloads
 WORKDIR /usr/workdir
-#RUN rm -rf node_modules && rm -rf dist
+
 RUN npm install && npm audit fix
 
 ## Build Vue App
@@ -31,9 +23,10 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DEBUG=false
-ARG VERSION=1.0.0
+ARG VERSION=-1
 ENV VERSION ${VERSION}
 ARG VANILLASTACK_ANSIBLE_VERSION=1.7.0
+ENV VANILLASTACK_ANSIBLE_VERSION ${VANILLASTACK_ANSIBLE_VERSION}
 # ARG VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v1.6.5.tar.gz'
 ENV VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v'${VANILLASTACK_ANSIBLE_VERSION}'.tar.gz'
 ARG ANSIBLEPATH='/tmp/ansible'

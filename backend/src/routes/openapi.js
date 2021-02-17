@@ -30,8 +30,12 @@ module.exports = function (app) {
       },
       servers: [
         {
-          url: `{hostname}:{port}/{basePath}`,
+          url: `{protocol}://{hostname}:{port}/{basePath}`,
           variables: {
+            protocol: {
+              enum: ['http', 'https'],
+              default: 'http',
+            },
             hostname: {
               default: ip,
             },
