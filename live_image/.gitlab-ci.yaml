@@ -33,6 +33,7 @@ build_liveimage_prod:
     WORKDIR: ./build
     OUTPUT: ./output
   script:
+    - apt update && apt install -y git
     - export WORKDIR=$(pwd)/$WORKDIR
     - export OUTPUT=$(pwd)/$OUTPUT
     - export VERSION=$(git tag|grep "^v"|sort -h|tail -1)
