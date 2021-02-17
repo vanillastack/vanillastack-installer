@@ -14,9 +14,9 @@ stages:
   - test
   - build_docker_image_dev
   - build_docker_image_testing
+  - release
   - build_docker_image_prod
   - build_liveimage
-  - release
 
 gen_version:
   stage: gen_version
@@ -36,8 +36,7 @@ build_docker_image_dev:
   interruptible: true
   script:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - echo "$VERSION" > version
-    - docker build -f docker/prod/installer/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:dev-$VERSION -t harbor.cloudical.net/vanillastack/installer:dev-latest .
+    - docker build -f docker/prod/installer/alpine/Dockerfile --build-arg VERSION=$VERSION -t harbor.cloudical.net/vanillastack/installer:dev-$VERSION -t harbor.cloudical.net/vanillastack/installer:dev-latest .
     - docker push harbor.cloudical.net/vanillastack/installer:dev-$VERSION
     - docker push harbor.cloudical.net/vanillastack/installer:dev-latest
 
@@ -50,8 +49,7 @@ build_docker_image_testing:
   allow_failure: true
   script:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - echo "VERSION" > version
-    - docker build -f docker/prod/installer/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:testing-$VERSION -t harbor.cloudical.net/vanillastack/installer:testing-latest .
+    - docker build -f docker/prod/installer/alpine/Dockerfile --build-arg VERSION=$VERSION -t harbor.cloudical.net/vanillastack/installer:testing-$VERSION -t harbor.cloudical.net/vanillastack/installer:testing-latest .
     - docker push harbor.cloudical.net/vanillastack/installer:testing-$VERSION
     - docker push harbor.cloudical.net/vanillastack/installer:testing-latest
 
@@ -63,23 +61,21 @@ build_docker_image_prod:
   interruptible: false
   script:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - echo "VERSION" > version
-    - docker build -f docker/prod/installer/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$VERSION -t harbor.cloudical.net/vanillastack/installer:latest .
-    - docker push harbor.cloudical.net/vanillastack/installer:$VERSION
+    - export RELEASE=$(git tag|grep "^v"|sort -h|tail -1) docker build -f docker/prod/installer/alpine/Dockerfile --build-arg VERSION=$RELEASE -t harbor.cloudical.net/vanillastack/installer:$RELEASE -t harbor.cloudical.net/vanillastack/installer:latest .
+    - export RELEASE=$(git tag|grep "^v"|sort -h|tail -1) docker push harbor.cloudical.net/vanillastack/installer:$RELEASE
     - docker push harbor.cloudical.net/vanillastack/installer:latest
 
 release:
-  only:
-    refs:
-      - master
+  image: node:12-buster-slim
   stage: release
-  interruptible: false
-  release:
-    tag_name: "$VERSION"
-    description: "VanillaStack stable release $VERSION"
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
+    - npm install -g semantic-release @semantic-release/gitlab
   script:
-    - echo "Publish release $VERSION"
-  image: registry.gitlab.com/gitlab-org/release-cli
+    - find .
+    - semantic-release
+  only:
+    - master
 
 include:
   - local: "/live_image/.gitlab-ci.yaml"
