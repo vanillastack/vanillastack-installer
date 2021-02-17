@@ -13,8 +13,8 @@ const getVersion = function () {
     console.log(`Reading Version File gone wrong:\n${e}`);
   }
 };
-
-const currentVersion = getVersion();
+// Version can be passed through build args
+const currentVersion = process.env.VERSION; // getVersion();
 
 const config = {
   ansibleBasePath: process.env.ANSIBLE_PATH || '/tmp/ansible',
