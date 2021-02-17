@@ -61,8 +61,9 @@ build_docker_image_prod:
   interruptible: false
   script:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - export RELEASE=$(git tag|grep "^v"|sort -h|tail -1) docker build -f docker/prod/installer/alpine/Dockerfile --build-arg VERSION=$RELEASE -t harbor.cloudical.net/vanillastack/installer:$RELEASE -t harbor.cloudical.net/vanillastack/installer:latest .
-    - export RELEASE=$(git tag|grep "^v"|sort -h|tail -1) docker push harbor.cloudical.net/vanillastack/installer:$RELEASE
+    - export RELEASE=$(git tag|grep "^v"|sort -h|tail -1)
+    - docker build -f docker/prod/installer/alpine/Dockerfile --build-arg VERSION=$RELEASE -t harbor.cloudical.net/vanillastack/installer:$RELEASE -t harbor.cloudical.net/vanillastack/installer:latest .
+    - docker push harbor.cloudical.net/vanillastack/installer:$RELEASE
     - docker push harbor.cloudical.net/vanillastack/installer:latest
 
 release:
