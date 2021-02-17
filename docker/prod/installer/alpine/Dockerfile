@@ -31,8 +31,11 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DEBUG=false
-ARG VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v1.6.5.tar.gz'
-ENV VANILLASTACK_ANSIBLE_SOURCE=${VANILLASTACK_ANSIBLE_SOURCE}
+ARG VERSION=1.0.0
+ENV VERSION ${VERSION}
+ARG VANILLASTACK_ANSIBLE_VERSION=1.7.0
+# ARG VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v1.6.5.tar.gz'
+ENV VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v'${VANILLASTACK_ANSIBLE_VERSION}'.tar.gz'
 ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
 ENV ANSIBLE_CONFIG=${ANSIBLEPATH}'/ansible.cfg'
