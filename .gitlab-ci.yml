@@ -17,6 +17,7 @@ stages:
   - release
   - build_docker_image_prod
   - build_liveimage
+  - build_liveimage_prod
 
 gen_version:
   stage: gen_version

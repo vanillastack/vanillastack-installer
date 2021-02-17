@@ -1,7 +1,6 @@
 build_liveimage:
   only:
     - /live-image.*/
-    - master
   stage: build_liveimage
   image: debian:buster
   variables:
@@ -10,6 +9,33 @@ build_liveimage:
   script:
     - export WORKDIR=$(pwd)/$WORKDIR
     - export OUTPUT=$(pwd)/$OUTPUT
+    - 'echo "Version: $VERSION"'
+    - mkdir -p $WORKDIR
+    - mkdir -p $OUTPUT
+    - cp -a live_image/rootfs/* $WORKDIR
+    - cd $WORKDIR/live-build
+    - $WORKDIR/prepare-installer.bash
+    - cp -a ../usr /
+    - $WORKDIR/build-installer.bash
+    - ls -la $OUTPUT
+    - rm $OUTPUT/vanilla*
+  artifacts:
+    expire_in: 2h
+    paths:
+      - ./output
+
+build_liveimage_prod:
+  only:
+    - master
+  stage: build_liveimage_prod
+  image: debian:buster
+  variables:
+    WORKDIR: ./build
+    OUTPUT: ./output
+  script:
+    - export WORKDIR=$(pwd)/$WORKDIR
+    - export OUTPUT=$(pwd)/$OUTPUT
+    - export VERSION=$(git tag|grep "^v"|sort -h|tail -1)
     - 'echo "Version: $VERSION"'
     - mkdir -p $WORKDIR
     - mkdir -p $OUTPUT
