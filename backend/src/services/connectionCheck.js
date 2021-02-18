@@ -62,7 +62,7 @@ const connectionCheck = function (
         options,
         (err, stdout, stderr) => {
           if (err) {
-            if (err.code !== 4) {
+            if (err.code !== 4 && err.code !== 8) {
               console.error(err);
               wsClient.verifiedNodes = null;
               wsMsg.event = 'ERROR';
