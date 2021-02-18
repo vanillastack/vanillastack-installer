@@ -60,8 +60,15 @@
                                 <div class="custom-control custom-switch inline-block">
                                     <input class="custom-control-input" id="useExternalLb" name="useExternalLb" type="checkbox" v-model="useExternalLb" v-on:change="triggerValidation()">
                                     <label class="custom-control-label" for="useExternalLb">
-                                        Use External LoadBalancer
+                                        Use External LoadBalancer (if not enabled the internal VanillaStack loadbalancer will be used)
                                     </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="custom-control custom-switch inline-block">
+                                    For more information see: <a href='https://docs.vanillastack.io/userguide/20.09/setup/requirements.html#_loadbalancer' target='_blank'>docs.vanillastack.io</a>
                                 </div>
                             </div>
                         </div>

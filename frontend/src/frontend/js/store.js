@@ -261,7 +261,7 @@ const clusterSettings = {
     usefqdn: true,
     adminfqdn: 'admin',
     useadminfqdn: true,
-    useExternalLb: true
+    useExternalLb: false
   }),
 
 
