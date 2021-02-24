@@ -18,6 +18,10 @@
                 <p><strong>kubectl Config</strong></p>
                 To access your Kubernetes-Cluster via the <em>kubectl</em> command line tool, please press the button <em>Download Config</em> to download the config.
             </div>
+            <div class="col">
+                <p><strong>VanillaStack Manager Login</strong></p>
+                To access the VanillaStack Manager please use the default user/password and change it during first login: admin / changeme 
+            </div>
         </div>
         <div class="row margin-2em" v-if="installed && !installationError">
             <div class="col">
