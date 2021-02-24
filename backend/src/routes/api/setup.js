@@ -135,6 +135,7 @@ router.post('/', function (req, res) {
       kubevirt_enabled: false, // todo: not yet implemented
       moodle_enabled: false, // todo: not yet implemented
       keycloak_enabled: true, // todo: not yet implemented
+      stratos_enabled: true, // todo: not yet imlemented
       // openstack_enabled: general.installOS,
     },
     vanillastorageprovider: 'rook', //todo: more types yet to come; needs to be implemented in frontend, currently bool for rook is provided
