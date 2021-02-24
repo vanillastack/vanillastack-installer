@@ -135,7 +135,7 @@
                         <div class="form-group row">
                             <div class="col">
                                 <div class="inline-block margin-right-2em" v-if="useadminfqdn">
-                                    <input class="form-control inline-block width-5em" placeholder="admin" name="adminfqdn" v-model="adminfqdn" 
+                                    <input class="form-control inline-block width-5em" placeholder="stratos" name="adminfqdn" v-model="adminfqdn" 
                                         v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
                                         :required="useadminfqdn" :disabled="!useadminfqdn" />
                                         .{{ clusterfqdn }}
