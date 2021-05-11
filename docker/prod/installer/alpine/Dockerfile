@@ -58,8 +58,7 @@ RUN apk update && \
     pip3 install -r requirements.txt && \
     ansible-galaxy install -r requirements.yml && \
     rm -rf /var/cache/apk*  && \
-    npm install 
-    # npm audit fix
+    npm install && npm audit fix
 
 ## copy app files
 COPY ./backend/src ./src/
