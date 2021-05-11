@@ -10,7 +10,7 @@ COPY ./frontend/src /usr/workdir/src
 WORKDIR /usr/workdir
 
 ## Install and do the audit fixing
-RUN npm install && npm audit fix --force
+RUN npm install 
 
 ## Build Vue App
 RUN npm run build
