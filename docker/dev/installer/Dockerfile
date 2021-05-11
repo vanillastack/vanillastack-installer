@@ -1,5 +1,5 @@
 FROM node:alpine3.12 AS build
-LABEL maintainer="jeff.chousterman@cloudical.io"
+LABEL maintainer="karsten.samaschke@cloudical.io"
 
 COPY ./frontend/package.json /usr/workdir/
 COPY ./frontend/package-lock.json /usr/workdir/
@@ -9,7 +9,7 @@ COPY ./frontend/src /usr/workdir/src
 
 WORKDIR /usr/workdir
 
-RUN npm install && npm audit fix
+RUN npm install && npm audit fix --force
 
 ## Build Vue App
 RUN npm run build
@@ -58,7 +58,8 @@ RUN apk update && \
     pip3 install -r requirements.txt && \
     ansible-galaxy install -r requirements.yml && \
     rm -rf /var/cache/apk*  && \
-    npm install && npm audit fix
+    npm install 
+    # && npm audit fix
 
 ## copy app files
 COPY ./backend/src ./src/
