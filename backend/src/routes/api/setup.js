@@ -112,7 +112,7 @@ router.post('/', function (req, res) {
     }`, // "10.96.0.0/12",
     cluster_sdn: 'cilium', // todo: needs to be mapped
     repo: {
-      registry: cluster.registry_endpoint, // todo: needs to be clarified
+      registry: 'https://repo-new.vanillastack.cloudical.net/' // adapted to static due to missing knowledge, where it is read from (cluster.registry_endpoint), // todo: needs to be clarified
     },
     staging_tag: 'stable', // todo: needs to be clarified
     LE_issuer_name: letsencrypt.issuer,
