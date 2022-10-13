@@ -47,7 +47,7 @@ COPY ./docker/prod/installer/alpine/requirements.* ./
 
 ## Get VS Ansible Playbooks
 RUN mkdir -p /tmp/downloads && mkdir -p ${ANSIBLEPATH} && \
-wget -qO- https://github.com/vanillastack/vanillastack/archive/v2.1.0.tar.gz | tar xvz --strip-components 1 -C  ${ANSIBLEPATH} && \
+wget -O- ${VANILLASTACK_ANSIBLE_SOURCE} | tar xvz --strip-components 1 -C  ${ANSIBLEPATH} && \
 # mv /tmp/downloads/ansible/* ${ANSIBLEPATH} && \
 rm -rf /tmp/downloads && rm -rf ${ANSIBLEPATH}/collections/ansible_collections/community/*
 
