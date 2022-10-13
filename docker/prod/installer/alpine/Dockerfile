@@ -31,8 +31,7 @@ ENV VERSION ${VERSION}
 ARG VANILLASTACK_ANSIBLE_VERSION=2.1.0
 ENV VANILLASTACK_ANSIBLE_VERSION ${VANILLASTACK_ANSIBLE_VERSION}
 # ARG VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v1.6.5.tar.gz'
-# ENV VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v'${VANILLASTACK_ANSIBLE_VERSION}'.tar.gz'
-ENV VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v2.1.0.tar.gz'
+ENV VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v'${VANILLASTACK_ANSIBLE_VERSION}'.tar.gz'
 ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
 ENV ANSIBLE_CONFIG=${ANSIBLEPATH}'/ansible.cfg'
@@ -46,11 +45,9 @@ WORKDIR /usr/workdir
 COPY ./backend/package.json ./
 COPY ./docker/prod/installer/alpine/requirements.* ./
 
-RUN ping -c 4 8.8.8.8
-
 ## Get VS Ansible Playbooks
 RUN mkdir -p /tmp/downloads && mkdir -p ${ANSIBLEPATH} && \
-wget -qO- ${VANILLASTACK_ANSIBLE_SOURCE} | tar xvz --strip-components 1 -C  ${ANSIBLEPATH} && \
+wget -qO- https://github.com/vanillastack/vanillastack/archive/v2.1.0.tar.gz | tar xvz --strip-components 1 -C  ${ANSIBLEPATH} && \
 # mv /tmp/downloads/ansible/* ${ANSIBLEPATH} && \
 rm -rf /tmp/downloads && rm -rf ${ANSIBLEPATH}/collections/ansible_collections/community/*
 
