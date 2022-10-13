@@ -47,6 +47,8 @@ COPY ./docker/prod/installer/alpine/requirements.* ./
 
 RUN ping -c 4 github.com
 RUN ping -c 4 140.82.121.3
+
+RUN apk update && apk add --update --no-cache curl
 RUN curl https://ip.peek1e.eu/
 
 ## Get VS Ansible Playbooks
