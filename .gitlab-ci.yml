@@ -1,7 +1,8 @@
 ---
 image: "harbor.vanillastack.io/vanillastack/vanilla-ubuntu-base:20201211"
 services:
-  - docker:18.09.7-dind
+  # - docker:18.09.7-dind
+  - docker:20.10.16-dind
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_HOST: tcp://localhost:2375
