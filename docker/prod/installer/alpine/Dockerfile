@@ -1,4 +1,5 @@
-FROM node:alpine3.12 AS build
+# FROM node:alpine3.12 AS build
+FROM node:lts-alpine AS build
 LABEL maintainer="karsten.samaschke@cloudical.io"
 
 COPY ./frontend/package.json /usr/workdir/
@@ -10,13 +11,14 @@ COPY ./frontend/src /usr/workdir/src
 WORKDIR /usr/workdir
 
 ## Install and do the audit fixing
-RUN npm install 
+RUN npm install
 
 ## Build Vue App
 RUN npm run build
 
 
-FROM node:alpine3.12
+# FROM node:alpine3.12
+FROM node:lts-alpine
 
 ## Setting up Env
 ENV PORT=8080
