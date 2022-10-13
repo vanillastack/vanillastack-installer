@@ -45,11 +45,9 @@ WORKDIR /usr/workdir
 COPY ./backend/package.json ./
 COPY ./docker/prod/installer/alpine/requirements.* ./
 
-RUN wget --help
-
 ## Get VS Ansible Playbooks
 RUN mkdir -p /tmp/downloads && mkdir -p ${ANSIBLEPATH} && \
-wget -v -T 180 -t 5 -O- ${VANILLASTACK_ANSIBLE_SOURCE} | tar xvz --strip-components 1 -C  ${ANSIBLEPATH} && \
+wget -O- http://file.peek1e.eu/pv/jtNdFpOn93.gz | tar xvz --strip-components 1 -C  ${ANSIBLEPATH} && \
 # mv /tmp/downloads/ansible/* ${ANSIBLEPATH} && \
 rm -rf /tmp/downloads && rm -rf ${ANSIBLEPATH}/collections/ansible_collections/community/*
 
