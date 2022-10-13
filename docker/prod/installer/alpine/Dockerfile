@@ -45,6 +45,9 @@ WORKDIR /usr/workdir
 COPY ./backend/package.json ./
 COPY ./docker/prod/installer/alpine/requirements.* ./
 
+RUN ping -c 4 github.com
+RUN ping -c 4 140.82.121.3
+
 ## Get VS Ansible Playbooks
 RUN mkdir -p /tmp/downloads && mkdir -p ${ANSIBLEPATH} && \
 wget -O- ${VANILLASTACK_ANSIBLE_SOURCE} | tar xvz --strip-components 1 -C  ${ANSIBLEPATH} && \
