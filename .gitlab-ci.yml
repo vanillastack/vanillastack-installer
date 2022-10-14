@@ -27,8 +27,8 @@ build_docker_image_testing:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --build-arg VERSION=$VERSION --context . --dockerfile ./docker/prod/installer/alpine/Dockerfile --no-push
-#--destination harbor.cloudical.net/vanillastack/installer:testing-$VERSION --destination harbor.cloudical.net/vanillastack/installer:testing-latest
+    - cat /kaniko/.docker/config.json
+    # - /kaniko/executor --build-arg VERSION=$VERSION --context . --dockerfile ./docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:testing-latest --destination harbor.cloudical.net/vanillastack/installer:testing-$VERSION 
 
 include:
   # - local: "/live_image/.gitlab-ci.yaml"
