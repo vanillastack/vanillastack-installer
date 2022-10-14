@@ -53,7 +53,7 @@ rm -rf /tmp/downloads && rm -rf ${ANSIBLEPATH}/collections/ansible_collections/c
 
 ## Install required tools, e.g. Ansible and pre-req
 RUN apk update && \
-    apk upgrade --available && \
+    apk upgrade --ignore alpine-baselayout --available && \
     sync && apk add --update --no-cache \
     openssh-client git musl-dev libffi-dev openssl-dev ca-certificates \
     python3 py3-pip python3-dev \
