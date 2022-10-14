@@ -1,7 +1,31 @@
-build:
-  stage: build
+---
+stages:
+  - gen_version
+  - test
+  - build_docker_image_testing
+
+gen_version:
+  stage: gen_version
+  interruptible: false
+  image: "harbor.vanillastack.io/vanillastack/vanilla-ubuntu-base:20201211"
+  script:
+    - echo "VERSION=$(date +'%Y%m')-$CI_COMMIT_SHORT_SHA" > vars.env
+    - cat vars.env
+  artifacts:
+    reports:
+      dotenv: vars.env    
+
+build_docker_image_testing:
+  only:
+    refs:
+      - testing
+  stage: build_docker_image_testing
+  interruptible: true
+  allow_failure: true
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    - /kaniko/executor --context . --dockerfile ./docker/prod/installer/alpine/Dockerfile --no-push
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --build-arg VERSION=$VERSION --context . --dockerfile ./docker/prod/installer/alpine/Dockerfile --no-push
+    # --destination harbor.cloudical.net/vanillastack/installer:testing-$VERSION --destination harbor.cloudical.net/vanillastack/installer:testing-latest
