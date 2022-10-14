@@ -26,9 +26,11 @@ build_docker_image_testing:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    # - echo "{\"auths\":{\"harbor.cloudical.net\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --build-arg VERSION=$VERSION --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:testing-latest --destination harbor.cloudical.net/vanillastack/installer:testing-$VERSION 
+    - | 
+      # - echo "{\"auths\":{\"harbor.cloudical.net\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+      echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+      cat /kaniko/.docker/config.json
+      /kaniko/executor --build-arg VERSION=$VERSION --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:testing-latest --destination harbor.cloudical.net/vanillastack/installer:testing-$VERSION 
 
 include:
   # - local: "/live_image/.gitlab-ci.yaml"
