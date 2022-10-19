@@ -9,7 +9,7 @@ COPY ./frontend/src /usr/workdir/src
 
 WORKDIR /usr/workdir
 
-RUN npm install && npm audit fix --force
+RUN npm install && npm audit fix
 
 ## Build Vue App
 RUN npm run build
@@ -25,7 +25,7 @@ ENV MODE=installer
 ENV DEBUG=false
 ARG VERSION=-1
 ENV VERSION ${VERSION}
-ARG VANILLASTACK_ANSIBLE_VERSION=1.8.2
+ARG VANILLASTACK_ANSIBLE_VERSION=2.1.1
 ENV VANILLASTACK_ANSIBLE_VERSION ${VANILLASTACK_ANSIBLE_VERSION}
 # ARG VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v1.6.5.tar.gz'
 ENV VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v'${VANILLASTACK_ANSIBLE_VERSION}'.tar.gz'

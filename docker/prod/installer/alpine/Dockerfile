@@ -1,4 +1,5 @@
-FROM node:alpine3.12 AS build
+# FROM node:alpine3.12 AS build
+FROM node:lts-alpine AS build
 LABEL maintainer="karsten.samaschke@cloudical.io"
 
 COPY ./frontend/package.json /usr/workdir/
@@ -10,13 +11,14 @@ COPY ./frontend/src /usr/workdir/src
 WORKDIR /usr/workdir
 
 ## Install and do the audit fixing
-RUN npm install 
+RUN npm install
 
 ## Build Vue App
 RUN npm run build
 
 
-FROM node:alpine3.12
+# FROM node:alpine3.12
+FROM node:lts-alpine
 
 ## Setting up Env
 ENV PORT=8080
@@ -26,14 +28,14 @@ ENV MODE=installer
 ENV DEBUG=false
 ARG VERSION=-1
 ENV VERSION ${VERSION}
-ARG VANILLASTACK_ANSIBLE_VERSION=1.8.2
+ARG VANILLASTACK_ANSIBLE_VERSION=2.1.1
 ENV VANILLASTACK_ANSIBLE_VERSION ${VANILLASTACK_ANSIBLE_VERSION}
 # ARG VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v1.6.5.tar.gz'
 ENV VANILLASTACK_ANSIBLE_SOURCE='https://github.com/vanillastack/vanillastack/archive/v'${VANILLASTACK_ANSIBLE_VERSION}'.tar.gz'
 ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
 ENV ANSIBLE_CONFIG=${ANSIBLEPATH}'/ansible.cfg'
-ENV COLLECTIONS_PATHS=${ANSIBLEPATH}'/collections'
+ENV COLLECTIONS_PATHS=${ANSIBLEPATH}'/collections' 
 # env nessessary due to issues with newer releases of python package cryptography
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 EXPOSE ${PORT}
@@ -51,7 +53,7 @@ rm -rf /tmp/downloads && rm -rf ${ANSIBLEPATH}/collections/ansible_collections/c
 
 ## Install required tools, e.g. Ansible and pre-req
 RUN apk update && \
-    apk upgrade --available && \
+    apk upgrade --ignore alpine-baselayout --available && \
     sync && apk add --update --no-cache \
     openssh-client git musl-dev libffi-dev openssl-dev ca-certificates \
     python3 py3-pip python3-dev \
