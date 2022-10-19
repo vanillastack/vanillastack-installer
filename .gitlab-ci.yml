@@ -3,7 +3,7 @@ stages:
   - gen_version
   - test
   - build_docker_image_testing
-  - release
+  # - release
   - build_docker_image_prod
   - build_liveimage
   - build_liveimage_prod
@@ -33,17 +33,17 @@ build_docker_image_testing:
     - echo "{\"auths\":{\"harbor.cloudical.net\":{\"auth\":\"$(printf "%s:%s" "robot\$build-backend-gitlab.cloudical.net" "${HARBOR_ROBOT_KEY_BUILD_BACKEND}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --build-arg VERSION=$VERSION --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:testing-latest --destination harbor.cloudical.net/vanillastack/installer:testing-$VERSION
 
-release:
-  image: node:12-buster-slim
-  stage: release
-  before_script:
-    - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
-    - npm install -g semantic-release @semantic-release/gitlab
-  script:
-    - find .
-    - semantic-release
-  only:
-    - master
+# release:
+#   image: node:12-buster-slim
+#   stage: release
+#   before_script:
+#     - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
+#     - npm install -g semantic-release @semantic-release/gitlab
+#   script:
+#     - find .
+#     - semantic-release
+#   only:
+#     - master
 
 build_docker_image_prod:
   only:
