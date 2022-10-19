@@ -57,8 +57,8 @@ build_docker_image_prod:
   script:
     - echo "{\"auths\":{\"harbor.cloudical.net\":{\"auth\":\"$(printf "%s:%s" "robot\$build-backend-gitlab.cloudical.net" "${HARBOR_ROBOT_KEY_BUILD_BACKEND}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - export RELEASE=$(git tag|grep "^v"|sort -h|tail -1)
-    - /kaniko/executor --build-arg VERSION=$RELEASE --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:$RELEASE --destination harbor.cloudical.net/vanillastack/installer:latest
+    - /kaniko/executor --build-arg VERSION=$RELEASE --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:$VERSION --destination harbor.cloudical.net/vanillastack/installer:latest
 
 include:
-  - local: "/live_image/.gitlab-ci.yaml"
+ # - local: "/live_image/.gitlab-ci.yaml"
   - template: Security/SAST.gitlab-ci.yml
