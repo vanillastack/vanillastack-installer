@@ -14,6 +14,7 @@ gen_version:
   image: "harbor.vanillastack.io/vanillastack/vanilla-ubuntu-base:20201211"
   script:
     - echo "VERSION=$(date +'%Y%m')-$CI_COMMIT_SHORT_SHA" > vars.env
+    - git tag|grep '^v'
     - echo "RELEASE=$(git tag|grep '^v'|sort -h|tail -1)" >> vars.env
     - cat vars.env
   artifacts:
