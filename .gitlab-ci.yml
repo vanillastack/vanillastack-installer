@@ -2,7 +2,7 @@
 stages:
   - gen_version
   - test
-  - build_docker_image_testing
+  # - build_docker_image_testing
   - release
   - build_docker_image_prod
   - build_liveimage
@@ -19,19 +19,19 @@ gen_version:
     reports:
       dotenv: vars.env    
 
-build_docker_image_testing:
-  only:
-    refs:
-      - testing
-  stage: build_docker_image_testing
-  interruptible: true
-  allow_failure: true
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  script:
-    - echo "{\"auths\":{\"harbor.cloudical.net\":{\"auth\":\"$(printf "%s:%s" "robot\$build-backend-gitlab.cloudical.net" "${HARBOR_ROBOT_KEY_BUILD_BACKEND}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --build-arg VERSION=$VERSION --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:testing-latest --destination harbor.cloudical.net/vanillastack/installer:testing-$VERSION
+# build_docker_image_testing:
+#   only:
+#     refs:
+#       - testing
+#   stage: build_docker_image_testing
+#   interruptible: true
+#   allow_failure: true
+#   image:
+#     name: gcr.io/kaniko-project/executor:debug
+#     entrypoint: [""]
+#   script:
+#     - echo "{\"auths\":{\"harbor.cloudical.net\":{\"auth\":\"$(printf "%s:%s" "robot\$build-backend-gitlab.cloudical.net" "${HARBOR_ROBOT_KEY_BUILD_BACKEND}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+#     - /kaniko/executor --build-arg VERSION=$VERSION --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:testing-latest --destination harbor.cloudical.net/vanillastack/installer:testing-$VERSION
 
 # release:
 #   image: node:12-buster-slim
@@ -48,7 +48,7 @@ build_docker_image_testing:
 build_docker_image_prod:
   only:
     refs:
-      - master
+      - testing
   stage: build_docker_image_prod
   interruptible: false
   image:
@@ -57,7 +57,8 @@ build_docker_image_prod:
   script:
     - echo "{\"auths\":{\"harbor.cloudical.net\":{\"auth\":\"$(printf "%s:%s" "robot\$build-backend-gitlab.cloudical.net" "${HARBOR_ROBOT_KEY_BUILD_BACKEND}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - export RELEASE=$(git tag|grep "^v"|sort -h|tail -1)
-    - /kaniko/executor --build-arg VERSION=$RELEASE --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:$VERSION --destination harbor.cloudical.net/vanillastack/installer:latest
+    - echo $RELEASE
+    # - /kaniko/executor --build-arg VERSION=$RELEASE --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:$VERSION --destination harbor.cloudical.net/vanillastack/installer:latest
 
 include:
   # - local: "/live_image/.gitlab-ci.yaml"
