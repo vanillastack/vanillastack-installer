@@ -39,7 +39,7 @@ push_docker_image_testing:
   only:
     refs:
       - testing
-  stage: build_docker_image_testing
+  stage: push_docker_image_testing
   interruptible: true
   allow_failure: true
   image:
