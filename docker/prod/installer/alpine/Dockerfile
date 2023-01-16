@@ -1,5 +1,5 @@
 # FROM node:alpine3.12 AS build
-FROM node:lts-alpine AS build
+FROM node:16.19.0-alpine3.17 AS build
 LABEL maintainer="karsten.samaschke@cloudical.io"
 
 COPY ./frontend/package.json /usr/workdir/
@@ -18,7 +18,7 @@ RUN npm run build
 
 
 # FROM node:alpine3.12
-FROM node:lts-alpine
+FROM node:16.19.0-alpine3.17
 
 ## Setting up Env
 ENV PORT=8080
@@ -61,7 +61,7 @@ RUN apk update && \
     pip3 install -r requirements.txt && \
     ansible-galaxy install -r requirements.yml && \
     rm -rf /var/cache/apk*  && \
-    npm install && npm audit fix
+    npm install && npm audit fix --force
 
 ## copy app files
 COPY ./backend/src ./src/
