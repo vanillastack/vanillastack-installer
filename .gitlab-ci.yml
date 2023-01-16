@@ -30,8 +30,8 @@ build_docker_image_testing:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    - echo "{\"auths\":{\"harbor.cloudical.net\":{\"auth\":\"$(printf "%s:%s" "robot\$build-backend-gitlab.cloudical.net" "${HARBOR_ROBOT_KEY_BUILD_BACKEND}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --build-arg VERSION=$VERSION --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:testing-latest --destination harbor.cloudical.net/vanillastack/installer:testing-$VERSION
+    - echo "{\"auths\":{\"$IMAGE_REPOSITORY\":{\"auth\":\"$(printf "%s:%s" "ROBOT_USER" "${HARBOR_ROBOT_KEY_BUILD_BACKEND}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --build-arg VERSION=$VERSION --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination $IMAGE_REPOSITORY/vanillastack/installer:testing-latest --destination $IMAGE_REPOSITORY/vanillastack/installer:testing-$VERSION
 
 # release:
 #   image: node:12-buster-slim
@@ -55,9 +55,9 @@ build_docker_image_prod:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    - echo "{\"auths\":{\"harbor.cloudical.net\":{\"auth\":\"$(printf "%s:%s" "robot\$build-backend-gitlab.cloudical.net" "${HARBOR_ROBOT_KEY_BUILD_BACKEND}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"$IMAGE_REPOSITORY\":{\"auth\":\"$(printf "%s:%s" "ROBOT_USER" "${HARBOR_ROBOT_KEY_BUILD_BACKEND}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - export RELEASE=$(git tag|grep "^v"|sort -h|tail -1)
-    - /kaniko/executor --build-arg VERSION=$RELEASE --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination harbor.cloudical.net/vanillastack/installer:$VERSION --destination harbor.cloudical.net/vanillastack/installer:latest
+    - /kaniko/executor --build-arg VERSION=$RELEASE --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/prod/installer/alpine/Dockerfile --destination $IMAGE_REPOSITORY/vanillastack/installer:$VERSION --destination $IMAGE_REPOSITORY/vanillastack/installer:latest
 
 include:
  # - local: "/live_image/.gitlab-ci.yaml"
