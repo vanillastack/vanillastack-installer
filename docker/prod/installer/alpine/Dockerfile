@@ -52,6 +52,7 @@ wget -qO- ${VANILLASTACK_ANSIBLE_SOURCE} | tar xvz --strip-components 1 -C  ${AN
 rm -rf /tmp/downloads && rm -rf ${ANSIBLEPATH}/collections/ansible_collections/community/*
 
 ## Install required tools, e.g. Ansible and pre-req
+## Please don't ask why ansible is installed twice, I don't know why the pip-requeirements are broken here
 RUN apk update && \
     apk upgrade --ignore alpine-baselayout --available && \
     sync && apk add --update --no-cache \
@@ -59,6 +60,7 @@ RUN apk update && \
     python3 py3-pip python3-dev \
     gcc make --virtual build-dependencies build-base && \
     pip3 install -r requirements.txt && \
+    apk add ansible && \
     ansible-galaxy install -r requirements.yml && \
     rm -rf /var/cache/apk*  && \
     npm install && npm audit fix --force
